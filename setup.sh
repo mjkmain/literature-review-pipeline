@@ -33,7 +33,15 @@ if ! command -v xelatex >/dev/null 2>&1 || ! command -v latexmk >/dev/null 2>&1;
   export PATH="$(tinytex_bin):$PATH"
 fi
 
-if command -v tlmgr >/dev/null 2>&1; then
+# Skip tlmgr (a network round trip) when the template's packages are already there.
+latex_ready() {
+  command -v latexmk >/dev/null 2>&1 &&
+  for f in beamer.cls xetexko.sty fontspec.sty booktabs.sty colortbl.sty translator.sty; do
+    [ -n "$(kpsewhich "$f" 2>/dev/null)" ] || return 1
+  done
+}
+
+if ! latex_ready && command -v tlmgr >/dev/null 2>&1; then
   # What the slide template (beamer + pptblue theme, XeLaTeX, Korean) needs.
   # (unfonts-core is left out on purpose: it is a very large download and only a
   #  last-resort fallback; the template ships its own Gmarket Sans fonts.)

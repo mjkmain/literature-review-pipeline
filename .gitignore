@@ -11,7 +11,7 @@ __pycache__/
 *.py[cod]
 
 # ---------------------------------------------------------------- Claude Code
-# Personal settings stay local; .claude/skills (links to claude-skills/) is shared.
+# Personal settings stay local; .claude/skills (the pipeline skills) is shared.
 .claude/settings.local.json
 
 # ---------------------------------------------------------------- Downloaded papers

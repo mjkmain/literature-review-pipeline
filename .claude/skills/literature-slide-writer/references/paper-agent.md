@@ -22,7 +22,7 @@ writing the neighbouring slides at the same time):
 - figure: `<deck>/<image>`
 - notes: `<deck>/<notes>`
 
-Tools: `PY=<repo>/.venv/bin/python`, `FIG=<repo>/claude-skills/skills/paper-figure-extractor/scripts/extract_figure.py`
+Tools: `PY=<repo>/.venv/bin/python`, `FIG=<repo>/.claude/skills/paper-figure-extractor/scripts/extract_figure.py`
 
 ## 1. Read the paper
 
