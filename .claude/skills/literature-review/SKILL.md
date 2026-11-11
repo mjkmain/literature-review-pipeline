@@ -3,6 +3,7 @@ name: literature-review
 description: "Runs the whole literature-review pipeline end to end without stopping: collect papers on a research area, categorize them by problem, download the PDFs, and build the slide deck. Each step follows its own skill's instructions; the user is asked nothing between steps and gets one report at the end."
 disable-model-invocation: true
 argument-hint: "<research area> [— years: 2023-] [— min: 30] [— korean]"
+allowed-tools: Bash(*), Read, Write, Edit, Glob, Grep, WebSearch, WebFetch, Agent
 ---
 
 # Literature Review (full pipeline)
