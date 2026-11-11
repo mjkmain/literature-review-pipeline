@@ -1,0 +1,3 @@
+# Fix the compile time zone so that \today prints the date in Korean time (KST).
+# Overleaf servers run in UTC, so without this file \today shows the previous day before 9 AM KST.
+$ENV{'TZ'} = 'Asia/Seoul';

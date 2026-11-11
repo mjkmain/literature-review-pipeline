@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------- OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ---------------------------------------------------------------- Python (./setup.sh)
+.venv/
+__pycache__/
+*.py[cod]
+
+# ---------------------------------------------------------------- Claude Code
+# Personal settings stay local; .claude/skills (links to claude-skills/) is shared.
+.claude/settings.local.json
+
+# ---------------------------------------------------------------- Downloaded papers
+# PDFs are large and mostly not ours to redistribute; index.md lists every
+# paper with its links, so paper-index-downloader can fetch them again.
+reference/**/*.pdf
+reference/**/*.part
+
+# ---------------------------------------------------------------- LaTeX
+# Intermediate files go to build/ (see the template's Makefile).
+build/
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.xdv
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Compiled decks are rebuilt with `make`; the template's sample PDFs stay as a preview.
+slide/*/slides-*.pdf
+!slide/literature_review_template/slides-*.pdf

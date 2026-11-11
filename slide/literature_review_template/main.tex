@@ -1,0 +1,60 @@
+\documentclass[aspectratio=169, 10pt, t]{beamer}
+\usetheme{pptblue}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% Meta line under the frame title of a paper slide: authors, venue, arXiv id
+% Use XeLaTex compiler
+\newcommand{\papermeta}[1]{{\small\color{pptgray}#1\par}\vspace{2mm}}
+% Category slide (Overview): problem focus + paper table
+\usepackage{tabularx,colortbl}
+% \categoryfocus[label]{1-2 sentences}: label + text with a left accent bar
+\newcommand{\categoryfocus}[2][Problem focus]{%
+  \par\vspace{-2mm}\noindent{\color{pptblue}\vrule width 1.6pt}\hspace{3.5mm}%
+  \parbox[c]{\dimexpr\linewidth-3.5mm-1.6pt}{\raggedright\vspace{0.6mm}%
+    {\footnotesize\bfseries\color{pptblue}#1\par}\vspace{0.4mm}#2\vspace{0.6mm}}\par\vspace{3mm}}
+% \begin{paperlist} \paperrow{name}{venue year}{one-line focus} ... \end{paperlist}
+\NewDocumentEnvironment{paperlist}{+b}{%
+  \renewcommand{\arraystretch}{1.35}%
+  \begin{tabularx}{\linewidth}{@{}l@{\hspace{8mm}}X@{}}
+    \arrayrulecolor{pptblue}\hline\arrayrulecolor{pptblue!12}% dark top rule, light row rules
+    #1%
+    \noalign{\vskip-\arrayrulewidth}\arrayrulecolor{pptblue}\hline % dark bottom rule over the last light one
+  \end{tabularx}\arrayrulecolor{black}}{}
+\newcommand{\paperrow}[3]{{\bfseries\color{pptblue}#1}\hspace{2mm}{\footnotesize\color{pptgray}#2} & #3 \\ \hline}
+% Landscape slide (Overview): one row per category
+% \begin{categorytable}[Category][Problem focus][Papers] \categoryrow{name}{one-line problem}{count} ... \end{categorytable}
+\NewDocumentEnvironment{categorytable}{O{Category} O{Problem focus} O{Papers} +b}{%
+  \par\vspace{-2mm}\renewcommand{\arraystretch}{1.35}%
+  \begin{tabularx}{\linewidth}{@{}l@{\hspace{6mm}}>{\raggedright\arraybackslash}X@{\hspace{6mm}}l@{}}
+    {\footnotesize\color{pptgray}#1} & \multicolumn{1}{@{}l@{\hspace{6mm}}}{\footnotesize\color{pptgray}#2}
+      & {\footnotesize\color{pptgray}#3} \\
+    \arrayrulecolor{pptblue}\hline\arrayrulecolor{pptblue!12}% dark top rule, light row rules
+    #4%
+    \noalign{\vskip-\arrayrulewidth}\arrayrulecolor{pptblue}\hline % dark bottom rule over the last light one
+  \end{tabularx}\arrayrulecolor{black}}{}
+% the count is shown as a number plus a bar (1.5mm per paper)
+\newcommand{\categoryrow}[3]{{\bfseries\color{pptblue}#1} & #2 &
+  \makebox[4mm][r]{#3}\hspace{2mm}{\color{pptblue!35}\rule[0.1ex]{\dimexpr 1.5mm*#3\relax}{1.2ex}} \\ \hline}
+\newcommand{\slidedir}{sections}
+\newcommand{\renderkorean}{\renewcommand{\slidedir}{sections-ko}}
+
+% \renderkorean
+\ifdefined\buildkorean\renderkorean\fi % set by `make ko` (see Makefile)
+
+\input{\slidedir/title} % \title, \subtitle
+\author{Minjun Kim}
+\institute{KAIST}
+\date{\today} % date in KST (see latexmkrc)
+
+\begin{document}
+
+\pptTitlePage
+\pptContentsPage
+
+\input{\slidedir/overview}        % Section 1: research landscape, one slide per category
+\input{\slidedir/paper_summaries} % Section 2: one slide per paper (figure | Problem/Method)
+\input{\slidedir/open_problems}   % Section 3: open problems
+
+\end{document}

@@ -1,0 +1,214 @@
+% =====================================================================
+%  beamerthemepptblue.sty
+%  Beamer port of template.pptx (16:9, 3A4C96 blue theme)
+%  Compiler: XeLaTeX (Overleaf: Menu > Compiler > XeLaTeX)
+% =====================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemepptblue}[2026/11/11 PPT template port (literature review)]
+
+\RequirePackage{tikz}
+\RequirePackage{xcolor}
+\RequirePackage{fontspec}
+\RequirePackage{xetexko}   % Korean support (XeLaTeX engine of kotex)
+
+% ---------------------------------------------------------------------
+%  Units: PPT slide (13.333in x 7.5in) -> Beamer 16:9 (160mm x 90mm)
+%  1 PPT inch = 12mm, PPT font size x pt = 0.4724x pt
+% ---------------------------------------------------------------------
+\newlength{\pu}\setlength{\pu}{12mm}
+\newcommand{\pptfont}[1]{%
+  \pgfmathsetmacro\ppt@fs{#1*0.4724}%
+  \pgfmathsetmacro\ppt@bs{#1*0.4724*1.2}%
+  \fontsize{\ppt@fs pt}{\ppt@bs pt}\selectfont}
+
+% ---------------------------------------------------------------------
+%  Colors
+% ---------------------------------------------------------------------
+\definecolor{pptblue}{HTML}{3A4C96}   % main blue
+\definecolor{pptnavy}{HTML}{002166}   % rule above the frame title
+\definecolor{pptgray}{HTML}{595959}   % page number
+
+% ---------------------------------------------------------------------
+%  Fonts: Gmarket Sans TTF (fonts/ folder) -> Noto Sans CJK KR -> UnDotum
+% ---------------------------------------------------------------------
+\IfFileExists{fonts/GmarketSansTTFMedium.ttf}{%
+  \def\ppt@fontopts{Path=fonts/,Extension=.ttf,
+    UprightFont=GmarketSansTTFMedium,BoldFont=GmarketSansTTFBold}%
+  \expandafter\setsansfont\expandafter{\expandafter}\expandafter[\ppt@fontopts]%
+  \expandafter\setsanshangulfont\expandafter{\expandafter}\expandafter[\ppt@fontopts]%
+  \expandafter\setmainhangulfont\expandafter{\expandafter}\expandafter[\ppt@fontopts]%
+}{%
+  \IfFontExistsTF{Noto Sans CJK KR}{%
+    \setsansfont{Noto Sans CJK KR}[BoldFont={* Bold}]%
+    \setsanshangulfont{Noto Sans CJK KR}[BoldFont={* Bold}]%
+    \setmainhangulfont{Noto Sans CJK KR}[BoldFont={* Bold}]%
+  }{%
+    \IfFontExistsTF{UnDotum}{%
+      \setsanshangulfont{UnDotum}[BoldFont={UnDotum Bold}]%
+      \setmainhangulfont{UnDotum}[BoldFont={UnDotum Bold}]%
+    }{}%
+  }%
+}
+\newcommand{\pptboldfont}{\bfseries}
+\usefonttheme{professionalfonts}
+\usefonttheme[onlymath]{serif}
+
+% ---------------------------------------------------------------------
+%  Basic settings
+% ---------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamersize{text margin left=5.4mm, text margin right=5.4mm}
+\setbeamercolor{normal text}{fg=black, bg=white}
+\setbeamercolor{structure}{fg=pptblue}
+\setbeamercolor{alerted text}{fg=pptblue}
+\setbeamercolor{frametitle}{fg=pptblue}
+\setbeamercolor{block title}{fg=pptblue, bg=}
+\setbeamercolor{block body}{fg=black, bg=}
+\setbeamerfont{block title}{size=\normalsize, series=\bfseries}
+\setbeamertemplate{block begin}{%
+  \par\vskip 1mm
+  {\usebeamerfont{block title}\usebeamercolor[fg]{block title}\insertblocktitle\par}%
+  \vskip 0.8mm
+  {\color{pptblue}\hrule height 0.5pt}%
+  \vskip 1.8mm
+  \usebeamerfont{block body}}
+\setbeamertemplate{block end}{\par\vskip 4mm}
+\setbeamerfont{frametitle}{size=\pptfont{28}}
+
+% Bullets: small squares (the Wingdings § symbol in the PPT)
+\setbeamertemplate{itemize item}{\color{pptblue}\raisebox{0.15ex}{\rule{0.55ex}{0.55ex}}}
+\setbeamertemplate{itemize subitem}{\color{pptblue}\raisebox{0.2ex}{\rule{0.45ex}{0.45ex}}}
+\setbeamertemplate{itemize subsubitem}{\color{pptblue}--}
+\setbeamertemplate{enumerate item}{\color{pptblue}\bfseries\insertenumlabel.}
+
+% Date: \today -> "2026. 11. 11." (date only)
+% Korean time (KST) is set by latexmkrc in the project root (TZ=Asia/Seoul)
+\AtBeginDocument{\renewcommand{\today}{\the\year.\ \the\month.\ \the\day.}}
+
+% Displayed page number: as in the PPT, title page = 0, contents = 1, ...
+\newcommand{\pptpagenumber}{\the\numexpr\insertframenumber-1\relax}
+\newcommand{\ppt@ifnonempty}[2]{%
+  \setbox0\hbox{#1}\ifdim\wd0>0pt #2\fi}
+\newcommand{\ppt@twodigit}[1]{\ifnum#1<10 0\fi#1}
+
+% ---------------------------------------------------------------------
+%  Shared: tikzpicture drawn on the background (origin at top left, unit = PPT inch)
+% ---------------------------------------------------------------------
+\newenvironment{ppt@canvas}{%
+  \begin{tikzpicture}[x=\pu, y=-\pu, inner sep=0pt, outer sep=0pt]
+    \useasboundingbox (0,0) rectangle (13.3333,7.5);
+}{\end{tikzpicture}}
+
+\newcommand{\ppt@pagenum}[1]{% #1 = color
+  \node[text=#1, anchor=center] at (6.6667,7.151) {\pptfont{12}-\pptpagenumber-};}
+
+\newcommand{\ppt@whiteborder}{%
+  \draw[white, line width=0.6pt] (0.1382,0.1493) rectangle (13.1951,7.3508);}
+
+% ---------------------------------------------------------------------
+%  Layout 4: regular content slide (default)
+% ---------------------------------------------------------------------
+\newcommand{\pptheader}{%
+  \insertsectionhead
+  \ifx\insertsubsection\@empty\else\ -\ \insertsubsection\fi}
+
+\setbeamertemplate{background}{%
+  \begin{ppt@canvas}
+    % top-left header
+    \node[anchor=west, text=pptblue] at (0.4507,0.421)
+      {\pptfont{14}\pptboldfont\pptheader};
+    % double rule above the title (thin line + short thick line)
+    \fill[pptnavy] (0.3508,0.6264) rectangle (13.3333,0.6475);
+    \fill[pptnavy] (0.3508,0.6047) rectangle (4.7918,0.6555);
+    \ppt@pagenum{pptgray}
+  \end{ppt@canvas}}
+
+\setbeamertemplate{headline}{\vbox to 9mm{}}
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \vbox to 8.14mm{\vfil
+    \hbox{\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}%
+          \pptboldfont\insertframetitle}%
+  \vfil}%
+  \vskip 3.2mm}
+\setbeamertemplate{footline}{\vbox to 10mm{}}
+
+% ---------------------------------------------------------------------
+%  Layout 1: title page  ->  \pptTitlePage
+% ---------------------------------------------------------------------
+\newcommand{\pptTitlePage}{%
+  {\setbeamertemplate{background}{%
+    \begin{ppt@canvas}
+      \node[anchor=north west] at (0,0)
+        {\includegraphics[width=13.3333\pu,height=7.5\pu]{images/title_bg.jpg}};
+      \ppt@whiteborder
+      % title (centered, anchored at the bottom)
+      \node[anchor=south, text width=11.3\pu, align=flush center, text=white]
+        at (6.6667,2.694) {\pptfont{40}\pptboldfont\inserttitle};
+      % subtitle / presenter (left-aligned)
+      \node[anchor=north west, text width=10\pu, align=flush left, text=white]
+        at (1.0024,4.462)
+        {\pptfont{24}\insertsubtitle\par
+         \ppt@ifnonempty{\insertauthor}{\vskip 0.8ex\pptfont{18}\insertauthor\par}%
+         \ppt@ifnonempty{\insertinstitute}{\vskip 0.3ex\pptfont{14}\insertinstitute\par}};
+      % date (bottom left)
+      \node[anchor=west, text=white] at (0.3216,7.151)
+        {\pptfont{12}\bfseries\insertdate};
+    \end{ppt@canvas}}%
+  \begin{frame}[plain]\end{frame}}}
+
+% ---------------------------------------------------------------------
+%  Layout 3: table of contents  ->  \pptContentsPage
+%  \section -> 01, 02 ... entries / \subsection -> bulleted entries below
+% ---------------------------------------------------------------------
+\setbeamertemplate{section in toc}{%
+  \vskip 0.36\pu
+  \hbox{\makebox[0.903\pu][l]{\color{pptblue}\pptfont{24}\pptboldfont
+          \ppt@twodigit{\inserttocsectionnumber}}%
+        {\color{black}\pptfont{24}\pptboldfont\inserttocsection}}%
+  \vskip 0.07\pu
+  \hbox{\hspace*{-0.08\pu}{\color{pptblue}\rule{6.707\pu}{0.5pt}}}%
+  \vskip 0.06\pu}
+\setbeamertemplate{subsection in toc}{%
+  \vskip 0.04\pu
+  \hbox{\hspace*{0.903\pu}%
+    \makebox[0.3125\pu][l]{\color{black}\pptfont{18}\raisebox{0.2ex}{\rule{0.55ex}{0.55ex}}}%
+    {\color{black}\pptfont{18}\inserttocsubsection}}}
+
+\newcommand{\pptContentsPage}{%
+  {\setbeamertemplate{background}{%
+    \begin{ppt@canvas}
+      % right blue panel + image
+      \fill[pptblue] (9.307,-0.02) rectangle (13.34,4.874);
+      \node[anchor=north west] at (9.307,4.865)
+        {\includegraphics[width=4.03\pu,height=2.649\pu]{images/contents_img.png}};
+      \node[anchor=north west, text=white] at (9.709,0.40)
+        {\pptfont{44}\pptboldfont Contents};
+      \ppt@pagenum{pptgray}
+    \end{ppt@canvas}}%
+  \begin{frame}[plain]
+    \begin{tikzpicture}[remember picture, overlay]
+      \node[anchor=north west, inner sep=0pt, text width=7\pu]
+        at ([xshift=1.017\pu, yshift=-0.88\pu]current page.north west)
+        {\tableofcontents};
+    \end{tikzpicture}
+  \end{frame}}}
+
+% ---------------------------------------------------------------------
+%  Layout 2: section divider (inserted automatically at every \section)
+% ---------------------------------------------------------------------
+\newif\ifpptsectionpages \pptsectionpagestrue
+\AtBeginSection[]{%
+  \ifpptsectionpages
+  {\setbeamertemplate{background}{%
+    \begin{ppt@canvas}
+      \fill[pptblue] (0,0) rectangle (13.3333,7.5);
+      \ppt@whiteborder
+      \node[text width=11.3\pu, align=flush center, text=white] at (6.6667,3.1806)
+        {\pptfont{44}\pptboldfont\insertsectionhead};
+      \ppt@pagenum{white}
+    \end{ppt@canvas}}%
+  \begin{frame}[plain]\end{frame}}%
+  \fi}
+
+\mode<all>
