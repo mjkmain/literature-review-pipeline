@@ -18,7 +18,13 @@ claude
 
 ## Usage
 
-Run the steps in order inside Claude Code. The skills run only when invoked.
+Run everything at once (no questions in between, one report at the end):
+
+```
+/literature-review <research area> — years: 2023- — min: 30 [— korean]
+```
+
+Or run the steps one by one, checking each output. The skills run only when invoked.
 
 ```
 /literature-collector <research area> — years: 2023- — min: 30   # → reference/papers.md
@@ -40,7 +46,7 @@ cd slide/<area>-literature && make en     # or: make ko
 ## Layout
 
 ```
-.claude/skills/                  # one skill per step, plus paper-figure-extractor (used by step 4)
+.claude/skills/                  # literature-review (runs all steps), one skill per step, paper-figure-extractor
 slide/literature_review_template # Beamer template, copied for each deck
 reference/                       # papers.md, index.md, downloaded PDFs (PDFs are git-ignored)
 setup.sh, requirements.txt
