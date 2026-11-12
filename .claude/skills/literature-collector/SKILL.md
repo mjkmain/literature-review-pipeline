@@ -63,7 +63,32 @@ arXiv ids written from memory are often slightly wrong — a real title with
 another paper's id, or a preprint remembered as an ACL paper — and a slightly
 wrong row is worse than a missing one, because it looks fine.
 
-### 3. Fill in each row from the paper's own page
+### 3. Scan the proceedings by title
+
+Search finds what is well linked; a paper can be published at a main venue and
+still never surface in a query. So also go through the proceedings themselves:
+the script downloads the title list of every paper at the venues that publish
+theirs online (ACL Anthology — ACL, EMNLP, NAACL, EACL, AACL, COLING, TACL,
+Findings, workshops — plus ICLR, ICML and NeurIPS) for the year range, and
+matches each thread's keywords against all of them.
+
+```bash
+python3 <this-skill-dir>/scripts/scan_proceedings.py --years <years> \
+  --thread "<thread name>=<regex>" --thread "<thread name>=<regex>" ...
+```
+
+One `--thread` per thread of the map. The regex is matched case-insensitively
+against titles only, so write it from the words papers in that thread put in
+their titles, with variants: `(cross-?lingual|multilingual).*(knowledge edit|model edit)|(knowledge edit|model edit).*(cross-?lingual|multilingual)`.
+It returns title, venue, year and official URL per match (the first run downloads
+the lists, about 20 MB; later runs use a 7-day cache).
+
+- A thread with hundreds of matches has a regex that is too broad; one with none has one that is too narrow. Adjust and run again — it takes seconds.
+- A match is a candidate, not a selection. Compare the matches with what the searches found; for each new one, open its page and read the abstract before it joins the candidates, and fill its row the same way as any other (step 4).
+- The scan cannot replace the searches: it sees only titles, so it misses papers whose titles do not name the topic, and it does not cover arXiv-only work or other venues.
+- If the downloads fail, say so in the report and continue with the search results.
+
+### 4. Fill in each row from the paper's own page
 
 **Venue and Year** — where and when the paper was published, taken from the
 proceedings page. Many arXiv papers were later published: check the arXiv
@@ -98,7 +123,7 @@ step groups papers by problem and "proposes X" tells it nothing:
 - Contribution (not wanted): "Proposes BMIKE-53, a benchmark for cross-lingual in-context knowledge editing."
 - Problem (wanted): "Knowledge edits are evaluated almost only in English, so it is unknown whether an edit made in one language holds when the model is queried in another."
 
-### 4. Select
+### 5. Select
 
 Merge the candidates and remove duplicates — a preprint and its published
 version are one paper; keep the published venue and both links. Then choose the
@@ -108,7 +133,7 @@ final list:
 - within a thread, prefer papers that are peer-reviewed, recent, and that other papers in the thread build on or compare against;
 - aim for `min` or more, but do not pad. If the area honestly yields fewer solid papers, stop there and say so — a tangential paper distorts the taxonomy built on this list.
 
-### 5. Write the table
+### 6. Write the table
 
 Write `out` (create the directory if needed) in exactly this shape; later steps
 parse it:
@@ -133,7 +158,7 @@ If `out` already exists, do not overwrite it silently — it may be a list the
 user has already built on. Say what is there and ask whether to replace it or
 add to it.
 
-### 6. Verify, then fix
+### 7. Verify, then fix
 
 ```bash
 python3 <this-skill-dir>/scripts/verify_papers.py <out> --min <min>
@@ -149,7 +174,7 @@ JSON report has three lists:
 Run it again after fixing, until `errors` is empty. If papers were dropped and
 the count fell below `min`, go back to the thinnest thread for replacements.
 
-### 7. Report
+### 8. Report
 
 Keep it short; the table is the deliverable.
 
@@ -157,6 +182,7 @@ Keep it short; the table is the deliverable.
 reference/papers.md — 34 papers on <area> (2023–2026)
 Threads: <thread> (7), <thread> (6), ...
 Venues: 21 conference, 4 Findings/workshop, 9 arXiv-only
+Proceedings scan: 112,000 titles, 41 matches, 9 papers added that the searches had missed
 Verification: all links checked; 3 OpenReview pages confirmed by hand
 Notes: <anything the user should know — a thread with few papers, papers dropped and why>
 ```
