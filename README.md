@@ -26,6 +26,8 @@ Run everything at once (no questions in between, one report at the end):
 ```
 
 Or run the steps one by one, checking each output. The skills run only when invoked.
+Run `/clear` between steps: each step reads its input from the files the previous
+one wrote, so it does not need the earlier conversation.
 
 ```
 /literature-collector <research area> — years: 2023- — min: 30   # → reference/papers.md
