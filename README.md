@@ -10,8 +10,9 @@ Requires [uv](https://docs.astral.sh/uv/) and [Claude Code](https://claude.com/c
 Clone once per research topic:
 
 ```bash
-git clone https://github.com/mjkmain/literature-review-pipeline.git my-topic-review
-cd my-topic-review
+TOPIC=my-topic    # folder name for this review
+git clone https://github.com/mjkmain/literature-review-pipeline.git $TOPIC
+cd $TOPIC
 ./setup.sh        # .venv (PyMuPDF) + TinyTeX in ~/.TinyTeX; first run on a machine takes a few minutes, later ~1 s
 claude
 ```
