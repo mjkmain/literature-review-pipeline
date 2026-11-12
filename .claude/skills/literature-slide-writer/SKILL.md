@@ -139,7 +139,6 @@ frame, spacing commands included:
 
 \begin{frame}{<The open problem, as a short statement>}
   \papermeta{Stated by papers}   % or: Inferred from the landscape
-  \vspace{-3mm}
   \footnotesize
   \begin{block}{What remains unsolved}
     \begin{itemize}\setlength{\itemsep}{0pt}

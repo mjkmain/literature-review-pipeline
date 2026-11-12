@@ -341,7 +341,7 @@ def check_frame(deck: Path, p: dict, lang: str) -> list[str]:
                 issues.append(f"{name} bullet is {len(it)} characters (limit {limit['bullet']}): '{it[:45]}...'")
     if total > limit["total"]:
         issues.append(f"bullets total {total} characters (limit {limit['total']}); the slide will overflow")
-    layout = ["\\vspace{-3mm}", "\\footnotesize", "{0.42\\textwidth}", "{0.55\\textwidth}"]
+    layout = ["\\papermeta{", "\\figcaption{", "\\paperbody", "{0.42\\textwidth}", "{0.55\\textwidth}"]
     if any(piece not in tex for piece in layout):
         issues.append("frame does not follow the layout in references/paper-agent.md (spacing/column commands changed)")
     if "Paper Title:" in tex or "Main figure" in tex or "Author et al." in tex:

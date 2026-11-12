@@ -4,9 +4,14 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 
-% Meta line under the frame title of a paper slide: authors, venue, arXiv id
 % Use XeLaTex compiler
-\newcommand{\papermeta}[1]{{\small\color{pptgray}#1\par}\vspace{2mm}}
+% Paper slide text sizes and spacing, set here once for every slide:
+% \papermeta{...}  authors, venue, arXiv id, directly under the frame title
+% \figcaption{...} caption under the figure (same size as \papermeta)
+% \paperbody       at the top of the Problem/Method column: body size, pulls the blocks up
+\newcommand{\papermeta}[1]{\vspace{-6.5mm}{\fontsize{6}{7.2}\selectfont\color{pptgray}#1\par}\vspace{1.5mm}}
+\newcommand{\figcaption}[1]{{\fontsize{6}{7.2}\selectfont #1\par}}
+\newcommand{\paperbody}{\fontsize{7.5}{9}\selectfont\vspace*{-5mm}}
 % Category slide (Overview): problem focus + paper table
 \usepackage{tabularx,colortbl}
 % \categoryfocus[label]{1-2 sentences}: label + text with a left accent bar

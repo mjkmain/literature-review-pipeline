@@ -45,7 +45,7 @@ SURVEY = re.compile(
     r"|(?:a|an|systematic|literature|comprehensive|critical|brief|scoping)\s+(?:review|overview))\b",
     re.I,
 )
-BOT_WALL = re.compile(r"verifying your browser|just a moment|attention required|are you a robot|access denied|captcha", re.I)
+BOT_WALL = re.compile(r"verifying your browser|just a moment|attention required|are you a robot|access denied|captcha|not a bot", re.I)
 SEPARATOR = re.compile(r"^:?-{2,}:?$")
 LINK = re.compile(r"\[([^\]]*)\]\(\s*(\S+?)\s*\)")
 BARE_URL = re.compile(r"https?://[^\s|)>]+")

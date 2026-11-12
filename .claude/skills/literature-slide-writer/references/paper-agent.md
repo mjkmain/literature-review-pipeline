@@ -58,24 +58,24 @@ results table (`--table N`) instead.
 
 ## 3. Write the slide
 
-Copy this frame and replace the content. Keep the structure, the spacing
-commands and the block titles exactly as they are — they are tuned so that the
-text fits beside the figure, and every paper slide in the deck uses the same ones.
+Copy this frame and replace the content. Keep the structure, the commands and
+the block titles exactly as they are. `\papermeta`, `\figcaption` and
+`\paperbody` set the font sizes and spacing for every paper slide in the deck
+(they are defined in `main.tex`); do not add size or `\vspace` commands of your own.
 
 ```latex
 \begin{frame}{<Short name>: <what the paper does, in a few words>}
   \papermeta{<First author> et al., <Venue>, <Year> (arXiv:<id>)}
-  \vspace{-3mm}
   \begin{columns}[T]
     \begin{column}{0.42\textwidth}
       \centering
       \includegraphics[width=\linewidth,height=42mm,keepaspectratio]{<image>}
 
       \vspace{1mm}
-      {\scriptsize Fig. N of the paper: <what the figure shows, one line>.\par}
+      \figcaption{Fig. N of the paper: <what the figure shows, one line>.}
     \end{column}
     \begin{column}{0.55\textwidth}
-      \footnotesize
+      \paperbody
       \begin{block}{Problem}
         \begin{itemize}\setlength{\itemsep}{0pt}
           \item ...
