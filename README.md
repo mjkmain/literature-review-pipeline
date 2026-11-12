@@ -4,6 +4,14 @@ Claude Code skills that survey a research area you are new to: collect papers,
 group them by the problem they address, download the PDFs, and build a Beamer
 slide deck (landscape → one slide per paper → open problems).
 
+| | |
+| --- | --- |
+| ![Research landscape: one row per problem category](docs/images/landscape.png) | ![Category slide: problem focus and its papers](docs/images/category.png) |
+| ![Paper slide: main figure, Problem, Method](docs/images/paper-dln.png) | ![Paper slide: main figure, Problem, Method](docs/images/paper-shared-grammar.png) |
+
+Slides from a deck built by the pipeline: the research landscape, one category,
+and two paper slides.
+
 ## Setup
 
 Requires [uv](https://docs.astral.sh/uv/) and [Claude Code](https://claude.com/claude-code).

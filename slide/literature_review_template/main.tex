@@ -6,10 +6,21 @@
 
 % Use XeLaTex compiler
 % Paper slide text sizes and spacing, set here once for every slide:
-% \papermeta{...}  authors, venue, arXiv id, directly under the frame title
+% \papermeta{...}  authors, venue, arXiv id, directly under the frame title;
+%                  "arXiv:<id>" in it becomes a link to arxiv.org/abs/<id>
 % \figcaption{...} caption under the figure (same size as \papermeta)
 % \paperbody       at the top of the Problem/Method column: body size, pulls the blocks up
-\newcommand{\papermeta}[1]{\vspace{-6.5mm}{\fontsize{6}{7.2}\selectfont\color{pptgray}#1\par}\vspace{1.5mm}}
+\ExplSyntaxOn
+\tl_new:N \l__papermeta_tl
+\NewDocumentCommand{\papermeta}{m}{
+  \tl_set:Nn \l__papermeta_tl {#1}
+  \regex_replace_all:nnN { arXiv:\s*(\d{4}\.\d{4,5}(?:v\d+)?) }
+    { \c{href} \cB\{ https\:\/\/arxiv\.org\/abs\/\1 \cE\} \cB\{ arXiv\:\1 \cE\} } \l__papermeta_tl
+  \vspace{-6.5mm}
+  {\fontsize{6}{7.2}\selectfont\color{pptgray}\tl_use:N \l__papermeta_tl \par}
+  \vspace{1.5mm}
+}
+\ExplSyntaxOff
 \newcommand{\figcaption}[1]{{\fontsize{6}{7.2}\selectfont #1\par}}
 \newcommand{\paperbody}{\fontsize{7.5}{9}\selectfont\vspace*{-5mm}}
 % Overview text sizes: body text, and the small gray labels (column heads, venues)
