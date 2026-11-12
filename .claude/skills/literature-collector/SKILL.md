@@ -84,7 +84,7 @@ It returns title, venue, year and official URL per match (the first run download
 the lists, about 20 MB; later runs use a 7-day cache).
 
 - A thread with hundreds of matches has a regex that is too broad; one with none has one that is too narrow. Adjust and run again — it takes seconds.
-- A match is a candidate, not a selection. Compare the matches with what the searches found; for each new one, open its page and read the abstract before it joins the candidates, and fill its row the same way as any other (step 4).
+- A match is a candidate, not a selection: a title says little. Drop the matches the searches already found (compare titles), and hand the new ones to subagents — always, however few there are, so that page contents never pile up in the main thread. One subagent per thread; threads with only a few new matches can share one. Give each the thread, its matches (title, venue, year, URL), the exclusion rule and the row requirements of step 4. It opens each paper's page, reads the abstract, and returns a filled row for every paper that belongs to the thread, plus one line per rejected paper saying why. Its rows join the candidates from step 2.
 - The scan cannot replace the searches: it sees only titles, so it misses papers whose titles do not name the topic, and it does not cover arXiv-only work or other venues.
 - If the downloads fail, say so in the report and continue with the search results.
 
