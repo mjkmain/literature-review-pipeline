@@ -80,13 +80,26 @@ python3 <this-skill-dir>/scripts/scan_proceedings.py --years <years> \
 One `--thread` per thread of the map. The regex is matched case-insensitively
 against titles only, so write it from the words papers in that thread put in
 their titles, with variants: `(cross-?lingual|multilingual).*(knowledge edit|model edit)|(knowledge edit|model edit).*(cross-?lingual|multilingual)`.
-It returns title, venue, year and official URL per match (the first run downloads
-the lists, about 20 MB; later runs use a 7-day cache).
+It returns title, venue, year and official URL per match, newest first (the
+first run downloads the lists, about 20 MB; later runs use a 7-day cache). Only
+main-conference, Findings and journal papers are listed; matches at workshops and
+demo, industry and student tracks are counted in `other_venues`.
 
-- A thread with hundreds of matches has a regex that is too broad; one with none has one that is too narrow. Adjust and run again — it takes seconds.
-- A match is a candidate, not a selection: a title says little. Drop the matches the searches already found (compare titles), and hand the new ones to subagents — always, however few there are, so that page contents never pile up in the main thread. One subagent per thread; threads with only a few new matches can share one. Give each the thread, its matches (title, venue, year, URL), the exclusion rule and the row requirements of step 4. It opens each paper's page, reads the abstract, and returns a filled row for every paper that belongs to the thread, plus one line per rejected paper saying why. Its rows join the candidates from step 2.
-- The scan cannot replace the searches: it sees only titles, so it misses papers whose titles do not name the topic, and it does not cover arXiv-only work or other venues.
-- If the downloads fail, say so in the report and continue with the search results.
+The scan is a recall check on the searches, not a second collection: the list
+is an overview of about `min` papers, so only a bounded number of scan matches
+get opened, however many titles match. Work through it in this order:
+
+1. **Fit the regexes.** A thread with no matches has a regex that is too narrow; widen it and run again (it takes seconds). A long list is fine when the titles really are about the thread — some areas put their topic in every title — but if most are off-topic, tighten the regex.
+2. **Drop what the searches already found** (compare titles).
+3. **Triage by title, in the main thread.** Titles are cheap to read, a few thousand tokens for hundreds of them. Strike what the title alone rules out: another modality or field, surveys and shared-task reports, system descriptions. From the rest, shortlist per thread the titles most likely to matter to that thread, preferring the newest where the searches found little recent work.
+4. **Keep to the budget.** Shortlist at most 10 per thread and at most 1.5 × `min` in total. If more look relevant than the budget allows, that is the area being large, not a reason to open them all; say in the report how many matched and how many were checked.
+5. **Hand the shortlist to subagents** — always, however few papers there are, so that page contents never pile up in the main thread. One subagent per thread; threads with only a few papers can share one. Give each the thread, its shortlisted papers (title, venue, year, URL), the exclusion rule and the row requirements of step 4. It opens each paper's page, reads the abstract, and returns a filled row for every paper that belongs to the thread, plus one line per rejected paper saying why. Its rows join the candidates from step 2.
+6. **Workshops only where a thread is thin.** If a thread still has too few candidates after this, run the scan again for that thread with `--all-venues` and treat its workshop and track papers the same way, within the same budget.
+
+The scan cannot replace the searches: it sees only titles, so it misses papers
+whose titles do not name the topic, and it does not cover arXiv-only work or
+other venues. If the downloads fail, say so in the report and continue with the
+search results.
 
 ### 4. Fill in each row from the paper's own page
 
@@ -182,7 +195,7 @@ Keep it short; the table is the deliverable.
 reference/papers.md — 34 papers on <area> (2023–2026)
 Threads: <thread> (7), <thread> (6), ...
 Venues: 21 conference, 4 Findings/workshop, 9 arXiv-only
-Proceedings scan: 112,000 titles, 41 matches, 9 papers added that the searches had missed
+Proceedings scan: 112,000 titles, 290 matches, 38 checked, 9 added that the searches had missed
 Verification: all links checked; 3 OpenReview pages confirmed by hand
 Notes: <anything the user should know — a thread with few papers, papers dropped and why>
 ```

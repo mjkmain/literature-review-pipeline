@@ -4,7 +4,7 @@
     scan_proceedings.py --years 2023-2026 \
         --thread "edit propagation=cross-?lingual.*(edit|unlearn)|multilingual.*(edit|unlearn)" \
         --thread "evaluation=(edit|unlearn).*(benchmark|evaluat)" \
-        [--venues acl,iclr,icml,neurips] [--max-per-thread 150] [--refresh]
+        [--venues acl,iclr,icml,neurips] [--all-venues] [--max-per-thread 150] [--refresh]
 
 Web search finds what is well linked; this finds what is merely published. It
 downloads the full title lists and matches each `--thread "name=regex"`
@@ -16,9 +16,13 @@ downloads the full title lists and matches each `--thread "name=regex"`
   icml     icml.cc/virtual/<year>/papers.html
   neurips  neurips.cc/virtual/<year>/papers.html
 
-Prints JSON: per thread, the matching papers with title, venue, year and URL.
-A match is a candidate, not a selection: the title says little, so open the
-page before a paper goes into the list. arXiv-only papers are not covered.
+Prints JSON: per thread, the matching papers with title, venue, year and URL,
+newest first. By default only main-conference, Findings and journal papers are
+listed; matches at workshops, demo, industry and student tracks are counted in
+`other_venues` and listed only with --all-venues (use it for a thread that is
+short of papers). A match is a candidate, not a selection: the title says
+little, so open the page before a paper goes into the list. arXiv-only papers
+are not covered.
 
 Lists are cached for 7 days in ~/.cache/literature-review (--refresh to renew).
 Standard library only.
@@ -43,7 +47,8 @@ ANTHOLOGY = "https://aclanthology.org/anthology.bib.gz"
 VIRTUAL = {"iclr": "ICLR", "icml": "ICML", "neurips": "NeurIPS"}
 # Anthology ids look like 2024.acl-long.627, 2025.findings-emnlp.12, 2024.repl4nlp-1.3.
 ACL_MAIN = {"acl": "ACL", "emnlp": "EMNLP", "naacl": "NAACL", "eacl": "EACL", "aacl": "AACL",
-            "ijcnlp": "IJCNLP-AACL", "coling": "COLING", "lrec": "LREC", "tacl": "TACL", "cl": "CL"}
+            "ijcnlp": "IJCNLP-AACL", "coling": "COLING", "lrec": "LREC", "conll": "CoNLL",
+            "tacl": "TACL", "cl": "CL"}
 MAIN_TRACKS = {"long", "short", "main", "1", "2", ""}   # anything else (srw, demo, tutorials, industry) is labelled
 
 
@@ -99,7 +104,8 @@ def anthology(years: range, refresh: bool) -> list[dict]:
         title, url = clean(field(entry, "title")), field(entry, "url")
         venue = acl_venue(url, field(entry, "booktitle") or field(entry, "journal"))
         if title and url:
-            out.append({"title": title, "venue": venue, "year": int(y.group(1)), "url": url})
+            out.append({"title": title, "venue": venue, "year": int(y.group(1)), "url": url,
+                        "main": not (venue.startswith("Workshop") or venue.endswith(")"))})
     return out
 
 
@@ -115,7 +121,8 @@ def virtual(site: str, years: range, refresh: bool) -> list[dict]:
             title = clean(title)
             if title and title.lower() not in seen:
                 seen.add(title.lower())
-                out.append({"title": title, "venue": VIRTUAL[site], "year": year, "url": f"https://{site}.cc{path}"})
+                out.append({"title": title, "venue": VIRTUAL[site], "year": year,
+                            "url": f"https://{site}.cc{path}", "main": True})
     return out
 
 
@@ -125,6 +132,8 @@ def main() -> int:
     ap.add_argument("--thread", action="append", required=True, metavar="NAME=REGEX",
                     help="repeatable; regex is matched case-insensitively against titles")
     ap.add_argument("--venues", default="acl,iclr,icml,neurips")
+    ap.add_argument("--all-venues", action="store_true",
+                    help="also list workshop, demo, industry and student-track papers (after the main ones)")
     ap.add_argument("--max-per-thread", type=int, default=150)
     ap.add_argument("--refresh", action="store_true", help="ignore the cache")
     args = ap.parse_args()
@@ -158,8 +167,12 @@ def main() -> int:
     result = {"years": f"{years.start}-{years.stop - 1}", "titles_scanned": scanned, "threads": {}}
     for name, rx in threads:
         hits = [p for p in papers if rx.search(p["title"])]
-        hits.sort(key=lambda p: (p["year"], p["venue"], p["title"]))
-        entry = {"matches": len(hits), "papers": hits[:args.max_per_thread]}
+        other = sum(not p["main"] for p in hits)
+        if not args.all_venues:
+            hits = [p for p in hits if p["main"]]
+        hits.sort(key=lambda p: (not p["main"], -p["year"], p["venue"], p["title"]))
+        shown = [{k: v for k, v in p.items() if k != "main"} for p in hits[:args.max_per_thread]]
+        entry = {"matches": len(hits), "other_venues": other, "papers": shown}
         if len(hits) > args.max_per_thread:
             entry["note"] = (f"{len(hits)} titles match; showing {args.max_per_thread}. "
                              "The regex is too broad for this thread: narrow it.")
