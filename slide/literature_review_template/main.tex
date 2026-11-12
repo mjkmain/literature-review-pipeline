@@ -12,29 +12,32 @@
 \newcommand{\papermeta}[1]{\vspace{-6.5mm}{\fontsize{6}{7.2}\selectfont\color{pptgray}#1\par}\vspace{1.5mm}}
 \newcommand{\figcaption}[1]{{\fontsize{6}{7.2}\selectfont #1\par}}
 \newcommand{\paperbody}{\fontsize{7.5}{9}\selectfont\vspace*{-5mm}}
+% Overview text sizes: body text, and the small gray labels (column heads, venues)
+\newcommand{\overviewbody}{\fontsize{8}{9.6}\selectfont}
+\newcommand{\overviewsmall}{\fontsize{6.5}{7.8}\selectfont}
 % Category slide (Overview): problem focus + paper table
 \usepackage{tabularx,colortbl}
 % \categoryfocus[label]{1-2 sentences}: label + text with a left accent bar
 \newcommand{\categoryfocus}[2][Problem focus]{%
   \par\vspace{-2mm}\noindent{\color{pptblue}\vrule width 1.6pt}\hspace{3.5mm}%
   \parbox[c]{\dimexpr\linewidth-3.5mm-1.6pt}{\raggedright\vspace{0.6mm}%
-    {\footnotesize\bfseries\color{pptblue}#1\par}\vspace{0.4mm}#2\vspace{0.6mm}}\par\vspace{3mm}}
+    {\overviewsmall\bfseries\color{pptblue}#1\par}\vspace{0.4mm}{\overviewbody #2\par}\vspace{0.6mm}}\par\vspace{3mm}}
 % \begin{paperlist} \paperrow{name}{venue year}{one-line focus} ... \end{paperlist}
 \NewDocumentEnvironment{paperlist}{+b}{%
-  \renewcommand{\arraystretch}{1.35}%
-  \begin{tabularx}{\linewidth}{@{}l@{\hspace{8mm}}X@{}}
+  \renewcommand{\arraystretch}{1.35}\overviewbody
+  \begin{tabularx}{\linewidth}{@{}l@{\hspace{8mm}}>{\raggedright\arraybackslash}X@{}}
     \arrayrulecolor{pptblue}\hline\arrayrulecolor{pptblue!12}% dark top rule, light row rules
     #1%
     \noalign{\vskip-\arrayrulewidth}\arrayrulecolor{pptblue}\hline % dark bottom rule over the last light one
   \end{tabularx}\arrayrulecolor{black}}{}
-\newcommand{\paperrow}[3]{{\bfseries\color{pptblue}#1}\hspace{2mm}{\footnotesize\color{pptgray}#2} & #3 \\ \hline}
+\newcommand{\paperrow}[3]{{\bfseries\color{pptblue}#1}\hspace{2mm}{\overviewsmall\color{pptgray}#2} & #3 \\ \hline}
 % Landscape slide (Overview): one row per category
 % \begin{categorytable}[Category][Problem focus][Papers] \categoryrow{name}{one-line problem}{count} ... \end{categorytable}
 \NewDocumentEnvironment{categorytable}{O{Category} O{Problem focus} O{Papers} +b}{%
-  \par\vspace{-2mm}\renewcommand{\arraystretch}{1.35}%
+  \par\vspace{-2mm}\renewcommand{\arraystretch}{1.35}\overviewbody
   \begin{tabularx}{\linewidth}{@{}l@{\hspace{6mm}}>{\raggedright\arraybackslash}X@{\hspace{6mm}}l@{}}
-    {\footnotesize\color{pptgray}#1} & \multicolumn{1}{@{}l@{\hspace{6mm}}}{\footnotesize\color{pptgray}#2}
-      & {\footnotesize\color{pptgray}#3} \\
+    {\overviewsmall\color{pptgray}#1} & \multicolumn{1}{@{}l@{\hspace{6mm}}}{\overviewsmall\color{pptgray}#2}
+      & {\overviewsmall\color{pptgray}#3} \\
     \arrayrulecolor{pptblue}\hline\arrayrulecolor{pptblue!12}% dark top rule, light row rules
     #4%
     \noalign{\vskip-\arrayrulewidth}\arrayrulecolor{pptblue}\hline % dark bottom rule over the last light one

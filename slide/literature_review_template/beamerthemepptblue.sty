@@ -162,34 +162,31 @@
 %  \section -> 01, 02 ... entries / \subsection -> bulleted entries below
 % ---------------------------------------------------------------------
 \setbeamertemplate{section in toc}{%
-  \vskip 0.36\pu
-  \hbox{\makebox[0.903\pu][l]{\color{pptblue}\pptfont{24}\pptboldfont
+  \vskip 0.2\pu
+  \hbox{\makebox[0.903\pu][l]{\color{pptblue}\pptfont{20}\pptboldfont
           \ppt@twodigit{\inserttocsectionnumber}}%
-        {\color{black}\pptfont{24}\pptboldfont\inserttocsection}}%
+        {\color{black}\pptfont{20}\pptboldfont\inserttocsection}}%
   \vskip 0.07\pu
   \hbox{\hspace*{-0.08\pu}{\color{pptblue}\rule{6.707\pu}{0.5pt}}}%
   \vskip 0.06\pu}
 \setbeamertemplate{subsection in toc}{%
-  \vskip 0.04\pu
+  \vskip -0.03\pu
   \hbox{\hspace*{0.903\pu}%
-    \makebox[0.3125\pu][l]{\color{black}\pptfont{18}\raisebox{0.2ex}{\rule{0.55ex}{0.55ex}}}%
-    {\color{black}\pptfont{18}\inserttocsubsection}}}
+    \makebox[0.3125\pu][l]{\color{black}\pptfont{14}\raisebox{0.2ex}{\rule{0.55ex}{0.55ex}}}%
+    {\color{black}\pptfont{14}\inserttocsubsection}}}
 
 \newcommand{\pptContentsPage}{%
   {\setbeamertemplate{background}{%
     \begin{ppt@canvas}
-      % right blue panel + image
-      \fill[pptblue] (9.307,-0.02) rectangle (13.34,4.874);
-      \node[anchor=north west] at (9.307,4.865)
-        {\includegraphics[width=4.03\pu,height=2.649\pu]{images/contents_img.png}};
-      \node[anchor=north west, text=white] at (9.709,0.40)
-        {\pptfont{44}\pptboldfont Contents};
+      % title, top left, where the frame title sits on content slides
+      \node[anchor=west, text=black, inner sep=0pt] at (1.017,0.9)
+        {\pptfont{28}\pptboldfont Contents};
       \ppt@pagenum{pptgray}
     \end{ppt@canvas}}%
   \begin{frame}[plain]
     \begin{tikzpicture}[remember picture, overlay]
       \node[anchor=north west, inner sep=0pt, text width=7\pu]
-        at ([xshift=1.017\pu, yshift=-0.88\pu]current page.north west)
+        at ([xshift=1.017\pu, yshift=-1.45\pu]current page.north west)
         {\tableofcontents};
     \end{tikzpicture}
   \end{frame}}}
