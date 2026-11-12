@@ -19,7 +19,7 @@ is written up as its own skill in `.claude/skills/`; this one runs them in order
 | 1 | `literature-collector` | area → `reference/papers.md` |
 | 2 | `literature-categorizer` | `papers.md` → `reference/index.md` |
 | 3 | `paper-index-downloader` | `index.md` → `reference/<category>/*.pdf` |
-| 4 | `literature-slide-writer` | index + PDFs → `slide/<area-slug>-literature/slides-en.pdf` |
+| 4 | `literature-slide-writer` | index + PDFs → `reference/summaries/`, `slide/<area-slug>-literature/slides-en.pdf` |
 
 ## How to run a step
 
@@ -70,6 +70,7 @@ Literature review: <area>
 3. PDFs     <downloaded>/<N>; missing: <titles>
 4. Slides   slide/<name>/slides-en.pdf — <S> slides (<P> papers, <M> open problems)
             [slides-ko.pdf if requested]
+   Summaries reference/summaries/ — one per paper
 Decisions taken without asking: <each, with the choice made>
 Category doubts from per-paper agents: <paper → reason>
 Unsure: <anything a step could not confirm>

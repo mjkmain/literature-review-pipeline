@@ -6,18 +6,19 @@ for the `<...>` fields in its prompt (they come from the paper's entry in
 
 ---
 
-You are writing one slide of a literature-review deck: the summary of a single
-paper. The audience is a researcher who is new to this area and has not read the
-paper. They should come away knowing what problem the paper takes on and how it
-goes about it.
+You are covering one paper of a literature review: a written summary of it, and
+one slide drawn from that summary. The audience is a researcher who is new to
+this area and has not read the paper. They should come away knowing what problem
+the paper takes on and how it goes about it.
 
 **Paper**: <title> (<venue> <year>)
 **PDF**: <pdf>
 **Category** (the problem this paper was filed under): <category> — <category problem focus>
 
-**Write exactly these three files and touch nothing else** (other agents are
-writing the neighbouring slides at the same time):
+**Write exactly these four files and touch nothing else** (other agents are
+writing the neighbouring papers at the same time):
 
+- summary: `<summary>`
 - slide: `<deck>/<tex>`
 - figure: `<deck>/<image>`
 - notes: `<deck>/<notes>`
@@ -26,12 +27,59 @@ Tools: `PY=<repo>/.venv/bin/python`, `FIG=<repo>/.claude/skills/paper-figure-ext
 
 ## 1. Read the paper
 
-Read the PDF itself — abstract, introduction, method, and the limitations /
-conclusion sections; skim the experiments; skip the appendix. Everything on the
-slide must come from what you read in this PDF, not from what you remember about
-the paper: memory mixes up versions and neighbouring papers.
+Read the PDF itself — abstract, introduction, method, experimental setup,
+results, and the limitations / conclusion sections; skip the appendix.
+Everything you write must come from what you read in this PDF, not from what you
+remember about the paper: memory mixes up versions and neighbouring papers.
 
-## 2. Extract the main figure
+## 2. Write the summary
+
+Write `<summary>` now, while the paper is fresh, and before the slide: the slide
+is then a selection from the summary, so the two cannot disagree. The summary
+outlives this run — the open-problems section is written from all the summaries,
+later edits and the Korean version use it instead of the PDF, and the user reads
+it to go one level deeper than the slide. So it has to be accurate on its own.
+
+```markdown
+# <title>
+
+<venue> <year> · <first author> et al. · <url or arXiv link>
+Category: <category>
+
+**TL;DR** — one sentence: the gap and what the paper does about it.
+
+## Problem
+What was broken, missing or unknown before this paper, and why existing work did
+not cover it. 2–4 sentences.
+
+## Method
+The core idea, then how it works. For a benchmark: what it contains and how it was
+built. For an analysis: what was measured and how. 3–6 sentences or bullets.
+
+## Setup
+- Models: <names and sizes>
+- Languages: <which, how many>
+- Data / benchmarks: <names>
+- Baselines: <names>
+
+## Key results
+- <finding, with the number and what it is compared against> (Table 2)
+- ... 2–5 bullets
+
+## Limitations (stated by the paper)
+- <limitation> (Sec. 7)
+
+## Future work (stated by the paper)
+- <direction> (Sec. 8)
+```
+
+Rules:
+- 400–600 words, plain Markdown, no LaTeX.
+- Every number carries where you read it (`Table 2`, `Sec. 5.1`, `Fig. 3`). If you cannot point to it, leave the number out.
+- Limitations and future work only as the paper states them, each with where. If it states none, write `- none stated`: do not supply your own, because the open-problems section separates what papers say from what is inferred.
+- Setup is what the experiments actually used. It is what lets the open-problems section see assumptions every paper shares (the same languages, the same model scale), so be complete.
+
+## 3. Extract the main figure
 
 The main figure is the one that explains what the paper does: for a method
 paper the overview / architecture figure (usually Figure 1 or 2); for a
@@ -56,9 +104,10 @@ $PY $FIG crop "<pdf>" --page P --bbox x0,y0,x1,y1 --out "<deck>/<image>"   # PDF
 Re-crop until it is right. If the paper has no figure at all, crop its main
 results table (`--table N`) instead.
 
-## 3. Write the slide
+## 4. Write the slide
 
-Copy this frame and replace the content. Keep the structure, the commands and
+The Problem and Method bullets are a selection from the summary's sections of the
+same name, shortened for the slide. Copy this frame and replace the content. Keep the structure, the commands and
 the block titles exactly as they are. `\papermeta`, `\figcaption` and
 `\paperbody` set the font sizes and spacing for every paper slide in the deck
 (they are defined in `main.tex`); do not add size or `\vspace` commands of your own.
@@ -122,10 +171,10 @@ is not essential.
 Before finishing, count: bullets per block, characters per bullet, characters in
 the title. Shorten until every limit holds.
 
-## 4. Write the notes
+## 5. Write the notes
 
-`<deck>/<notes>` — plain text values (no LaTeX), used for the overview slides
-and the open-problems section:
+`<deck>/<notes>` — plain text values (no LaTeX), read by the deck's scripts for
+the overview slides:
 
 ```json
 {
@@ -133,18 +182,12 @@ and the open-problems section:
   "short_title": "the name used in the frame title, e.g. BMIKE-53",
   "focus": "what this paper focuses on, one line of at most 80 characters",
   "figure": "Figure 2, page 3, detected automatically | adjusted by hand",
-  "limitations": ["limitations the paper itself states, each with where (e.g. 'Sec. 7')"],
-  "future_work": ["directions the paper itself names as open"],
   "category_fit": "ok | doubt: <why the paper seems to belong under another problem>",
-  "unsure": "anything on the slide you could not confirm in the PDF, or empty"
+  "unsure": "anything in the summary or on the slide you could not confirm in the PDF, or empty"
 }
 ```
 
-Record only limitations and future work that the paper states. If it states
-none, leave the lists empty — do not supply your own; the open-problems section
-separates what papers say from what is inferred.
-
-## 5. Report
+## 6. Report
 
 Do not compile. Reply in a few lines: which figure you used and whether the box
 needed adjusting, and anything you were unsure about.

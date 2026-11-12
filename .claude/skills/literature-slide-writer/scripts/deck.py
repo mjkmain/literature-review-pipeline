@@ -8,8 +8,9 @@
 
 prepare   copy the template to the deck directory (only if it does not exist yet),
           read index.md / papers.md, and write <deck>/papers.json: one entry per paper
-          with the paths its slide, figure and notes must be written to, and whether
-          they exist already. Run it again at any time to see what is still to do.
+          with the paths its summary, slide, figure and notes must be written to,
+          and whether they exist already. Summaries go next to the PDFs:
+          <index dir>/summaries/<category>/<key>.md. Run it again at any time to see what is still to do.
 assemble  write sections/overview.tex and sections/paper_summaries.tex from
           papers.json and the per-paper notes. With --lang ko, write only
           sections-ko/paper_summaries.tex (the Korean overview is translated by hand).
@@ -180,14 +181,17 @@ def cmd_prepare(args) -> int:
             "tex": f"sections/papers/{short}/{key}.tex",
             "image": f"images/{short}/{key}.png",
             "notes": f"notes/{key}.json",
+            "summary": str((ref / "summaries" / short / f"{key}.md").resolve()),
         })
 
     for p in papers:
         p["pdf_exists"] = Path(p["pdf"]).is_file()
-        p["done"] = all((deck / p[k]).is_file() for k in ("tex", "image", "notes"))
+        p["done"] = all((deck / p[k]).is_file() for k in ("tex", "image", "notes")) \
+            and Path(p["summary"]).is_file()
     for sub in {p["category_short"] for p in papers}:
         for base in ("sections/papers", "sections-ko/papers", "images"):
             (deck / base / sub).mkdir(parents=True, exist_ok=True)
+        (ref / "summaries" / sub).mkdir(parents=True, exist_ok=True)
     (deck / "notes").mkdir(exist_ok=True)
 
     manifest = {"area": area, "index": str(index.resolve()), "deck": str(deck.resolve()),
@@ -362,6 +366,26 @@ def check_frame(deck: Path, p: dict, lang: str) -> list[str]:
         for field in ("short_title", "focus"):
             if not notes.get(field):
                 issues.append(f"notes/{p['key']}.json has no '{field}'")
+        issues += check_summary(p)
+    return issues
+
+
+SUMMARY_SECTIONS = ("Problem", "Method", "Setup", "Key results",
+                    "Limitations (stated by the paper)", "Future work (stated by the paper)")
+
+
+def check_summary(p: dict) -> list[str]:
+    path = Path(p.get("summary", ""))
+    if not p.get("summary") or not path.is_file():
+        return [f"summary missing: {p.get('summary') or '(run prepare again)'}"]
+    text = path.read_text(encoding="utf-8")
+    issues = [f"summary has no '## {s}' section" for s in SUMMARY_SECTIONS
+              if not re.search(rf"^##\s+{re.escape(s)}\s*$", text, re.M)]
+    if "**TL;DR**" not in text:
+        issues.append("summary has no **TL;DR** line")
+    words = len(re.findall(r"\S+", text))
+    if not 250 <= words <= 900:
+        issues.append(f"summary is {words} words; write 400-600")
     return issues
 
 

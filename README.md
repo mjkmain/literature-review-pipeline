@@ -31,7 +31,7 @@ Or run the steps one by one, checking each output. The skills run only when invo
 /literature-collector <research area> — years: 2023- — min: 30   # → reference/papers.md
 /literature-categorizer                                          # → reference/index.md
 /paper-index-downloader                                          # → reference/<category>/*.pdf
-/literature-slide-writer                                         # → slide/<area>-literature/slides-en.pdf
+/literature-slide-writer                                         # → reference/summaries/, slide/<area>-literature/slides-en.pdf
 /literature-slide-writer — korean                                # optional: slides-ko.pdf
 ```
 
@@ -49,6 +49,6 @@ cd slide/<area>-literature && make en     # or: make ko
 ```
 .claude/skills/                  # literature-review (runs all steps), one skill per step, paper-figure-extractor
 slide/literature_review_template # Beamer template, copied for each deck
-reference/                       # papers.md, index.md, downloaded PDFs (PDFs are git-ignored)
+reference/                       # papers.md, index.md, summaries/ (one .md per paper), PDFs (git-ignored)
 setup.sh, requirements.txt
 ```

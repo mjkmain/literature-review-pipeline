@@ -22,15 +22,17 @@ only when the user asks for it (`korean`, "한국어 버전도").
 
 Three kinds of work, kept apart on purpose:
 
-- **Per-paper agents** read one PDF each and write that paper's slide, figure and notes. They run in parallel and each touches only its own three files, so they cannot collide.
+- **Per-paper agents** read one PDF each and write that paper's summary, slide, figure and notes. They run in parallel and each touches only its own four files, so they cannot collide.
 - **`scripts/deck.py`** does the bookkeeping: which papers are done, assembling the overview and the paper section from the index and the notes, building the PDF, finding slides that overflow. Anything a script can decide, it decides, so that 35 slides come out uniform.
 - **You** (the main session) run the stages, write the open-problems section — the one part that needs a view across all papers — and review the built deck.
 
 ```
+reference/summaries/<category>/<key>.md   # per paper: 400-600 word summary, next to the PDFs
+
 <deck>/
 ├── main.tex, Makefile, beamerthemepptblue.sty, fonts/     # from the template, unchanged
 ├── papers.json                  # manifest written by `deck.py prepare`
-├── notes/<key>.json             # per paper: short title, one-line focus, stated limitations
+├── notes/<key>.json             # per paper: short title, one-line focus, category doubts
 ├── images/<category>/<key>.png  # per paper: main figure, 600 DPI
 ├── sections/
 │   ├── title.tex                # you
@@ -85,13 +87,15 @@ with these values for the <...> fields:
 - deck: <deck, absolute path>
 - key / title / venue / year / arxiv_id / pdf
 - category / category problem focus
-- tex / image / notes
+- tex / image / notes / summary
 ```
 
 Launch them in parallel, about eight at a time, so the whole set finishes in a
 few rounds without flooding the machine. The brief tells each agent to read the
-PDF, crop the main figure with the `paper-figure-extractor` script and look at
-the crop, write the frame, and write the notes file.
+PDF, write the summary, crop the main figure with the `paper-figure-extractor`
+script and look at the crop, write the frame from the summary, and write the
+notes file. The summaries are kept: they are what the open-problems step reads,
+and what the user reads to go deeper than a slide.
 
 When a round finishes, run `$DECK prepare ...` again (same arguments): `todo`
 now lists only the papers whose agent failed or left a file out. Relaunch
@@ -119,8 +123,9 @@ assemble again, because the generated files are overwritten on every run.
 
 ### 4. Write the open problems
 
-Read all `notes/*.json` (the `limitations` and `future_work` the papers state)
-and look at the taxonomy as a whole. Identify 4–6 open problems from two sources:
+Read all the summaries (`summary` paths in `papers.json`): their stated
+limitations and future work, and their Setup sections, which show what the
+experiments assume. Look at the taxonomy as a whole. Identify 4–6 open problems from two sources:
 
 - **Stated by papers** — a limitation or open direction that several papers name independently, or that one paper names and none of the others resolves.
 - **Inferred from the landscape** — a gap visible only across papers: a problem no category addresses, or an assumption every paper in a category shares and none tests (the same languages, the same model scale, the same benchmark).
@@ -208,6 +213,7 @@ slides into `sections-ko/`, then builds and checks `slides-ko.pdf`.
 
 ```
 slide/<name>/slides-en.pdf — <N> slides: overview (<K> categories), <P> papers, <M> open problems
+reference/summaries/ — <P> paper summaries
 Papers without a slide: <titles and why — missing PDF, agent could not extract a figure>
 Figures adjusted by hand: <count>; used a table instead of a figure: <papers>
 Category doubts raised by the per-paper agents: <paper → reason>
