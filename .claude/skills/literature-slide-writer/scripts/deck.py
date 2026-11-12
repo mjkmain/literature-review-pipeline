@@ -397,13 +397,19 @@ def tex_env() -> dict:
     return env
 
 
+def pdf_path(deck: Path, lang: str) -> Path:
+    """<area>_slide_<lang>.pdf, <area> being the deck directory's name without '-literature' (as in the Makefile)."""
+    area = deck.resolve().name.removesuffix("-literature")
+    return deck / f"{area}_slide_{'ko' if lang == 'ko' else 'en'}.pdf"
+
+
 def build(deck: Path, lang: str) -> dict:
     env = tex_env()
     if not shutil.which("latexmk", path=env["PATH"]) or not shutil.which("xelatex", path=env["PATH"]):
         return {"built": False, "reason": "xelatex/latexmk not found; run ./setup.sh in the project root"}
     target = "ko" if lang == "ko" else "en"
     proc = subprocess.run(["make", target], cwd=deck, env=env, capture_output=True, text=True, errors="replace")
-    pdf = deck / f"slides-{target}.pdf"
+    pdf = pdf_path(deck, lang)
     log = deck / "build" / f"slides-{target}.log"
     errors = []
     if log.is_file():
@@ -507,7 +513,7 @@ def cmd_sheets(args) -> int:
     import pymupdf
     from PIL import Image, ImageDraw
     deck = Path(args.deck)
-    pdf = deck / f"slides-{'ko' if args.lang == 'ko' else 'en'}.pdf"
+    pdf = pdf_path(deck, args.lang)
     if not pdf.is_file():
         fail(f"{pdf} not found; run `deck.py check` to build it")
     out = Path(args.out)

@@ -41,8 +41,8 @@ one wrote, so it does not need the earlier conversation.
 /literature-collector <research area> — years: 2023- — min: 30   # → reference/papers.md
 /literature-categorizer                                          # → reference/index.md
 /paper-index-downloader                                          # → reference/<category>/*.pdf
-/literature-slide-writer                                         # → reference/summaries/, slide/<area>-literature/slides-en.pdf
-/literature-slide-writer — korean                                # optional: slides-ko.pdf
+/literature-slide-writer                                         # → reference/summaries/, slide/<area>-literature/<area>_slide_en.pdf
+/literature-slide-writer — korean                                # optional: <area>_slide_ko.pdf
 ```
 
 Check each step's output before running the next. Step 4 runs one agent per

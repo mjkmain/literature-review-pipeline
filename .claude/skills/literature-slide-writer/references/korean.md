@@ -1,7 +1,7 @@
 # Korean version
 
 Read this only when the user asked for Korean slides. It produces
-`sections-ko/` and `slides-ko.pdf` from the finished English deck. The English
+`sections-ko/` and `<area>_slide_ko.pdf` from the finished English deck. The English
 deck must already pass `deck.py check`: translate final text, not drafts.
 
 The Korean deck is for a Korean-speaking researcher who reads English papers

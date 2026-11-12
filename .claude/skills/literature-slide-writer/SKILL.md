@@ -178,7 +178,7 @@ $DECK check <deck>
 
 It checks every paper slide (one frame, its own figure, Problem and Method
 blocks, bullet count and length, unescaped LaTeX characters, figure
-resolution), builds `slides-en.pdf` with `make`, and inspects the PDF for slides
+resolution), builds `<area-slug>_slide_en.pdf` with `make` (the name comes from the deck directory), and inspects the PDF for slides
 whose content runs past the bottom. Work through the report:
 
 - `build.latex_errors` — the build stopped. The message names the line; fix that file and run again.
@@ -207,12 +207,12 @@ change together.
 ### 7. Korean version (only if asked)
 
 Read `references/korean.md` and follow it. It translates the finished English
-slides into `sections-ko/`, then builds and checks `slides-ko.pdf`.
+slides into `sections-ko/`, then builds and checks `<area-slug>_slide_ko.pdf`.
 
 ### 8. Report
 
 ```
-slide/<name>/slides-en.pdf — <N> slides: overview (<K> categories), <P> papers, <M> open problems
+slide/<area-slug>-literature/<area-slug>_slide_en.pdf — <N> slides: overview (<K> categories), <P> papers, <M> open problems
 reference/summaries/ — <P> paper summaries
 Papers without a slide: <titles and why — missing PDF, agent could not extract a figure>
 Figures adjusted by hand: <count>; used a table instead of a figure: <papers>

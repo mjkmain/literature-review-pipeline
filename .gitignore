@@ -36,5 +36,5 @@ build/
 *.synctex.gz
 
 # Compiled decks are rebuilt with `make`; the template's sample PDFs stay as a preview.
-slide/*/slides-*.pdf
-!slide/literature_review_template/slides-*.pdf
+slide/*/*_slide_*.pdf
+!slide/literature_review_template/*_slide_*.pdf
